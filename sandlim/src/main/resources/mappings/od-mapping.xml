@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="OdDAO">
+
+<!-- select 는  resultType 필수, 나머지는 기술 x  -->
+	<select id="getOdList" resultType="oddto">
+		SELECT * FROM OD WHERE 1=1 
+		<if test="searchCondition == 'TITLE' ">AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')</if>
+		<if test="searchCondition == 'CONTENT' ">AND CONTENT LIKE CONCAT('%',#{searchKeyword},'%')</if>
+		ORDER BY SEQ DESC
+	</select>
+	
+	<select id="getOd" resultType="oddto">
+		SELECT * FROM OD WHERE SEQ = #{seq}
+	</select>
+
+	<insert id="insertOd">
+		INSERT INTO OD(TITLE, WRITER, CONTENT, FILENAME) " + " VALUES( #{title}, #{writer}, #{content}, #{filename})
+	</insert>
+	
+	<update id="revokeOd">
+		UPDATE OD SET O_STATE = "주문취소" WHERE O_NO = #{o_no}
+	</update>
+	
+<!-- 	<update id="updateOdPoint"> -->
+<!-- 		UPDATE "회원테이블의포인트" = "기존포인트" + O_SAVEPOINT SET WHERE O_NO = #{o_no} AND O_STATE = "완료"</if> -->
+<!-- 	</update> -->
+</mapper>
