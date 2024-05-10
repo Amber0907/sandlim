@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardDAO">
+
+	<!-- 공지사항 리스트 가져오기 -->
+	<select id="getBoardList" resultType="boarddto">
+		SELECT * FROM board WHERE b_sort ='notice'
+		<if test="searchCondition == 'B_TITLE' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		<if test="searchCondition == 'B_CONTENT' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		ORDER BY B_NUM DESC
+	</select>
+
+	<!-- 공지사항 상세 가져오기 -->
+	<select id="getBoard" resultType="boarddto">
+		SELECT * FROM BOARD WHERE b_num= #{b_num} and b_sort='notice'
+	</select>
+
+
+	<!-- 공지사항 등록 -->
+	<insert id="insertBoard">
+		INSERT INTO BOARD(B_SORT, B_CAT, B_TITLE, B_NICK, B_CONTENT, B_FILE, B_DATE) 
+		VALUES('notice',#{b_cat}, #{b_title}, #{b_nick}, #{b_content}, #{b_file}, sysdate())
+	</insert>
+
+
+	<!-- faq 등록 -->
+	<insert id="insertFaq">
+		INSERT INTO BOARD(B_SORT, B_CAT, B_TITLE, B_NICK, B_CONTENT, B_FILE, B_DATE) VALUES('faq',#{b_cat}, #{b_title},
+		#{b_nick}, #{b_content}, #{b_file}, sysdate())
+	</insert>
+
+	<!-- 공지사항 수정 -->
+	<update id="updateBoard">
+		UPDATE BOARD SET B_CAT =#{b_cat}, B_TITLE=#{b_title}, B_CONTENT= #{b_content} WHERE B_NUM= #{b_num}
+	</update>
+
+	<!-- 공지사항 삭제 -->
+	<delete id="deleteBoard">
+		DELETE FROM BOARD WHERE B_NUM = #{b_num}
+	</delete>
+
+	<!-- REVIEW 리스트 가져오기 -->
+	<select id="getReview" resultType="boarddto">
+		SELECT * FROM board WHERE b_sort = 'review' ORDER BY B_DATE DESC
+	</select>
+
+	<!-- REVIEW 상세 가져오기 -->
+	<select id="getReviewDetail" resultType="boarddto">
+		SELECT * FROM BOARD WHERE b_num= #{b_num} and b_sort='review'
+	</select>
+
+	<!-- REVIEW 등록 -->
+	<insert id="insertReview">
+		INSERT INTO BOARD(B_SORT, B_CAT, B_REV, B_TITLE, B_NICK, B_CONTENT, B_FILE,	B_DATE, B_STATUS)
+		VALUES('review','리뷰', #{b_rev}, '리뷰', #{b_nick}, #{b_content}, #{b_file}, sysdate(), '공개')
+	</insert>
+
+	<!-- REVIEW 수정 -->
+	<update id="updateReview">
+		UPDATE BOARD SET B_REV = #{b_rev}, B_CONTENT= #{b_content} WHERE B_NUM=	#{b_num}
+	</update>
+
+	<!-- REVIEW 삭제 -->
+	<delete id="deleteReview">
+		DELETE FROM BOARD WHERE B_NUM = #{b_num}
+	</delete>
+
+	<!-- FAQ 리스트 가져오기(공용) -->
+	<select id="getFaqList" resultType="boarddto">
+		SELECT * FROM board WHERE 1=1 and b_sort='faq'
+		<if test="searchCondition == 'B_TITLE' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		<if test="searchCondition == 'B_CONTENT' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		ORDER BY B_NUM DESC
+	</select>
+
+	<!-- FAQ 리스트 가져오기(어드민) -->
+	<select id="adminFaqList" resultType="boarddto">
+		SELECT * FROM board WHERE 1=1 and b_sort='faq'
+		<if test="searchCondition == 'B_TITLE' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		<if test="searchCondition == 'B_CONTENT' "> AND b_title LIKE CONCAT('%', #{searchKeyword}, '%')</if>
+		ORDER BY B_NUM DESC
+	</select>
+
+	<!-- FAQ 상세 가져오기(어드민) -->
+	<select id="adminFaqDetail" resultType="boarddto">
+		SELECT * FROM BOARD WHERE b_num=#{b_num} and b_sort='faq'
+	</select>
+
+	<!-- FAQ 수정 -->
+	<update id="updateFaq">
+		UPDATE BOARD SET B_CAT=#{b_cat}, B_TITLE=#{b_title}, B_CONTENT=#{b_content}, B_STATUS=#{b_status} WHERE B_NUM=#{b_num}
+	</update>
+
+	<!-- 공지사항 삭제 -->
+	<delete id="deleteFaq">
+		DELETE FROM BOARD WHERE B_NUM = #{b_num}
+	</delete>
+	
+	<!-- 페이징을 위한 전체 데이터 갯수 가져오기 -->
+	<select id="boardTotalCnt" parameterType="com.one.san.util.Pagination" resultType="integer">
+		SELECT count(*) FROM BOARD WHERE b_sort='faq'
+		<if test="searchType != null"> and B_CAT like CONCAT('%', #{searchType}, '%')</if>
+		<if test="keyword != null"> and B_TITLE like CONCAT('%', #{keyword}, '%')</if>
+	</select>
+	
+	<!-- 페이징 처리 후 데이터를 가져오는 로직 -->
+	<select id="selectList"	parameterType="com.one.san.util.Pagination" resultType="boarddto">
+		SELECT ROW_NUMBER() OVER() as RNUM,  B.* FROM BOARD B WHERE b_sort='faq'
+		<if test="keyword != null">
+			<if test="searchType != null"> and B_CAT like CONCAT('%', #{searchType}, '%')</if>
+			<if test="keyword != null"> and B_TITLE like CONCAT('%', #{keyword}, '%')</if>
+			ORDER BY RNUM DESC 
+			LIMIT #{sizePerPage} OFFSET #{startList}
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,98 @@
+* {
+box-sizing:border-box
+}
+
+body,h1,h2,h3,p,li {
+margin:0;
+padding:0
+}
+
+nav ul {
+list-style:none;
+padding:0
+}
+
+.container {
+width: 700px;
+max-width:80%;
+margin:20px auto;
+padding:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.1)
+}
+
+.terms-text {
+height:200px;
+overflow-y:scroll;
+margin-bottom:20px;
+padding:10px;
+border:1px solid #ccc
+}
+
+button {
+opacity:1;
+transition:opacity .3s
+}
+
+button:disabled {
+opacity:.5;
+cursor:not-allowed
+}
+
+.txt,.tit,.pri_tit,.sub_tit {
+font-size:18px;
+color:#222;
+margin-bottom:15px
+}
+
+.terms-text li,.privacy_cont p,.privacy_cont li {
+font-size:14px;
+color:#444;
+line-height:1.6
+}
+
+.mb15,.mb40 {
+margin-bottom:15px
+}
+
+.mb40 {
+margin-bottom:40px
+}
+
+.fontBold {
+font-weight:700
+}
+
+.underLine {
+text-decoration:underline
+}
+
+button#submitButton {
+	display: block;
+	margin: 0 auto;
+	width: 100%;
+    background-color: #4CAF50; /* 녹색 배경 */
+    color: white; /* 흰색 텍스트 */
+    padding: 14px 20px; /* 패딩 설정 */
+    border: none; /* 테두리 제거 */
+    border-radius: 4px; /* 둥근 테두리 설정 */
+    cursor: pointer; /* 마우스 오버 시 커서 변경 */
+    transition: background 0.3s ease; /* 배경색 변경 애니메이션 */
+}
+
+button#submitButton:hover {
+    background-color: #45a049; /* 마우스 오버 시 밝은 녹색으로 변경 */
+}
+
+button#submitButton:disabled {
+    background-color: #ccc; /* 비활성화 시 회색
+
+
+@media (max-width: 768px) {
+.container {
+max-width:95%
+}
+
+.txt,.tit,.pri_tit,.sub_tit {
+font-size:16px
+}
+}

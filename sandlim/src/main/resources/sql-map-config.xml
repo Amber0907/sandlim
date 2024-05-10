@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+<configuration>
+
+   <typeAliases>
+      <typeAlias type="com.one.san.moc.MdVO" alias="mddto"></typeAlias>
+      <typeAlias type="com.one.san.moc.OdVO" alias="oddto"></typeAlias>
+      <typeAlias type="com.one.san.moc.CartVO" alias="cartdto"></typeAlias>
+      <typeAlias type="com.one.san.board.BoardVO" alias="boarddto"/>
+      <typeAlias type="com.one.san.user.UserVO" alias="userdto"></typeAlias>
+   </typeAliases>
+   
+   <mappers>
+      <mapper resource="mappings/md-mapping.xml" />
+      <mapper resource="mappings/od-mapping.xml" />
+      <mapper resource="mappings/cart-mapping.xml" />
+      <mapper resource="mappings/board-mapping.xml" />
+      <mapper resource="mappings/user-mapping.xml" />
+   </mappers>
+</configuration>

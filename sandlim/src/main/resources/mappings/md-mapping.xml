@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 	메뉴에 관련된 쿼리문  -->
+<mapper namespace="MdDAO">
+	
+<!-- 	메뉴 전체 목록 가져오기  -->
+	<select id="selectList" resultType="mddto">
+		SELECT * FROM MD WHERE 1=1 ORDER BY M_NO
+	</select>
+	
+<!-- 	키워드에 따른 메뉴 불러오기 -->
+	<select id="selectkind" resultType="mddto">
+		SELECT * FROM MD WHERE M_KIND = #{m_kind} ORDER BY M_NO 
+	</select>
+	
+	<select id="soldList" resultType="mddto">
+		SELECT * FROM MD WHERE 
+		<if test="m_state == '품절'"> M_STATE = '품절' </if>
+		<if test="m_state == '판매가능'"> M_STATE = '판매가능' </if>
+		ORDER BY M_NO 
+	</select>
+	
+<!-- 	검색해서 메뉴 리스트 가져오기 -->
+	<select id="searchList" resultType="mddto">
+		SELECT * FROM MD WHERE 1=1
+		<if test="searchCondition == '이름'">and M_NAME like CONCAT('%', #{searchKeyword} , '%')</if>
+		<if test="searchCondition == '이상가격'">and M_PRICE >= #{searchKeyword} </if>
+		<if test="searchCondition == '이하가격'">and M_PRICE &lt;= #{searchKeyword} </if>
+		 ORDER BY M_NO
+	</select>
+	
+<!-- 	상세보기, 수정 버튼 클릭 시 해당하는 메뉴에 대한 정보 가져오기 -->
+	<select id="getMd" resultType="mddto">
+		SELECT * FROM MD WHERE M_NO = #{m_no}
+	</select>
+	
+<!-- 	관리자: 메뉴 추가 -->
+	<insert id="insertMd">
+		INSERT INTO MD(M_NO, M_NAME, M_IMG, M_PRICE, M_CONTENT, M_KIND, M_SUGAR, M_KCAL, M_SFAT, M_NAT, M_PRO, M_CAFE, M_HI, M_SIZE, M_SEL, M_CARBO, M_FAT,  M_STATE) VALUES( #{m_no}, #{m_name}, #{m_img}, #{m_price}, #{m_content}, #{m_kind}, #{m_sugar}, #{m_kcal}, #{m_sfat}, #{m_nat}, #{m_pro}, #{m_cafe}, #{m_hi}, #{m_size}, #{m_sel}, #{m_carbo}, #{m_fat}, #{m_state} )
+	</insert>
+	
+<!-- 	관리자: 메뉴 수정 -->
+	<update id="updateMd">
+		UPDATE MD SET M_NAME = #{m_name}, M_PRICE = #{m_price}, M_IMG = #{m_img}, M_CONTENT = #{m_content}, M_KIND = #{m_kind}, M_SUGAR = #{m_sugar}, M_KCAL = #{m_kcal}, M_SFAT = #{m_sfat}, M_NAT = #{m_nat}, M_PRO = #{m_pro}, M_CAFE = #{m_cafe},  M_CARBO = #{m_carbo}, M_FAT = #{m_fat}, M_SEL = #{m_sel}, M_STATE = #{m_state} WHERE M_NO = #{m_no}
+	</update>
+	
+<!-- 	관리자 : 메뉴 삭제  -->
+	<delete id="deleteMd">
+		DELETE FROM MD WHERE M_NO = #{m_no}
+	</delete>
+	
+<!-- 	영양 정보 가져오기  -->
+	<select id="getContent" resultType="mddto">
+      SELECT * FROM MD WHERE M_NAME = #{m_name}
+  	 </select>
+
+</mapper>

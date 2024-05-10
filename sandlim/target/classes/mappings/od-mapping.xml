@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="OdDAO">
+
+	<!-- select 는 resultType 필수, 나머지는 기술 x -->
+<!-- 	아작스용  -->
+	<select id="odsearch" resultType="oddto">
+		SELECT * FROM OD WHERE 1=1
+		<if test="searchCondition == '주문자' ">AND O_ID LIKE CONCAT('%',#{searchKeyword},'%')</if>
+		<if test="searchCondition == '주문상태' ">AND O_STATE LIKE CONCAT('%',#{searchKeyword},'%')</if>
+		<if test="searchCondition == '픽업/배달' ">AND O_WAY LIKE CONCAT('%',#{searchKeyword},'%')</if>
+		ORDER BY O_DATE DESC
+	</select>
+	
+	<!-- select 는 resultType 필수, 나머지는 기술 x -->
+	<select id="getProductListPaging" parameterType="com.one.san.util.Pagination" resultType="oddto">
+		SELECT * FROM OD WHERE 1=1
+		<if test="searchType == '주문자' ">AND O_ID LIKE CONCAT('%',#{keyword},'%')</if>
+		<if test="searchType == '주문상태' ">AND O_STATE LIKE CONCAT('%',#{keyword},'%')</if>
+		<if test="searchType == '픽업/배달' ">AND O_WAY LIKE CONCAT('%',#{keyword},'%')</if>
+		ORDER BY O_DATE DESC LIMIT #{sizePerPage} OFFSET #{startList} 
+	</select>
+
+	<select id="ddsearch" resultType="oddto">
+		SELECT * FROM OD WHERE O_DATE LIKE CONCAT('%',#{o_date},'%') ORDER BY O_DATE DESC
+	</select>
+
+	<!-- <select id="odAllList" resultType="oddto"> -->
+	<!-- SELECT * FROM OD WHERE 1=1 ORDER BY o_date DESC -->
+	<!-- </select> -->
+
+	<select id="selectOd" resultType="oddto">
+		SELECT * FROM OD WHERE o_no =
+		#{o_no}
+	</select>
+
+
+	<select id="countProductList" resultType="integer">
+		SELECT count(*) FROM OD WHERE 1=1
+		<if test="keyword != null">
+			<if test="searchType == '주문자'"> and O_ID like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == '주문상태'"> and U_NAME like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == '픽업/배달'"> and U_NICK like CONCAT('%', #{keyword}, '%') </if>
+		</if>
+	</select>
+
+	<select id="receipt" resultType="oddto">
+		SELECT * FROM OD WHERE O_NO = #{o_no}
+	</select>
+	
+	<!-- 나의 주문내역(완료랑 진행중 둘다 같은 쿼리문입니다)  -->
+   <select id="odMyAllList" resultType="oddto">
+      SELECT * FROM OD WHERE O_ID = #{o_id}
+      ORDER BY O_DATE DESC
+   </select>
+
+	<!-- 결제 완료시 od테이블 값 넣기 -->
+	<insert id="putOder">
+		INSERT INTO OD(O_NO, O_ID, O_NAME, O_NUM, O_TOTAL,
+		O_TOPRICE, O_DATE, O_WAY, O_USEPOINT, O_SAVEPOINT, O_BUY, O_ADDRESS,
+		O_PHONE, O_DELIVERY, O_OPTION, O_SIZE, O_EACHPRICE) VALUE(#{o_no}, #{o_id},
+		#{o_name}, #{o_num},
+		#{o_total}, #{o_toprice}, #{o_date}, #{o_way}, #{o_usepoint},
+		#{o_savepoint}, #{o_buy}, #{o_address}, #{o_phone}, #{o_delivery}, #{o_option},
+		#{o_size}, #{o_eachprice})
+	</insert>
+
+	<update id="revokeOd">
+		UPDATE OD SET O_STATE = "취소" WHERE O_NO = #{o_no}
+	</update>
+
+	<update id="updateOd">
+		UPDATE OD
+		<if test="o_state == '주문접수' "> SET O_STATE = "주문진행중"</if>
+		<if test="o_state == '제조완료' "> SET O_STATE = "제조완료"</if>
+		<if test="o_state == '픽업완료' "> SET O_STATE = "픽업완료"</if>
+		<if test="o_state == '완료' "> SET O_STATE = "완료"</if>
+		WHERE O_NO = #{o_no}
+	</update>
+
+	<!-- <update id="updateOdPoint"> -->
+	<!-- UPDATE "회원테이블의포인트" = "기존포인트" + O_SAVEPOINT SET WHERE O_NO = #{o_no} 
+		AND O_STATE = "완료"</if> -->
+	<!-- </update> -->
+</mapper>

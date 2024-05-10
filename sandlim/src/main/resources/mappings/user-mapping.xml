@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UserDAO">
+
+	<!-- type은 sql-map-config에 설정한 typeAliases 사용했다 -->
+	<resultMap type="userdto" id="users">
+		<!-- id 태그로 설정할 수 있는것은 테이블에 프라이머리키로 지정된 컬럼만 가능하다. property : 클래스 멤버필드의 
+			이름 / column : db컬럼명 -->
+		<id property="u_id" column="U_ID" />
+		<result property="u_pw" column="U_PW" />
+		<result property="u_nick" column="U_NICK" />
+		<result property="u_name" column="U_NAME" />
+		<result property="u_phno" column="U_PHNO" />
+		<result property="u_addr" column="U_ADDR" />
+		<result property="u_birth" column="U_BIRTH" />
+		<result property="u_email" column="U_EMAIL" />
+		<result property="u_point" column="U_POINT" />
+		<result property="u_status" column="U_STATUS" />
+		<result property="u_social" column="U_SOCIAL" />
+	</resultMap>
+
+	<!-- 로그인 쓸 때 -->
+	<select id="getUser" resultType="userdto">
+		SELECT * FROM USERS WHERE U_ID = #{u_id}
+	</select>
+
+	<select id="selectPhno" parameterType="string" resultMap="users">
+		SELECT * FROM USERS WHERE u_phno = #{u_phno}
+	</select>
+	
+	<select id="selectEmail" parameterType="string" resultMap="users">
+		SELECT * FROM USERS WHERE u_email = #{u_email}
+	</select>
+
+	<!-- resultType은 내가 만든 클래스(자료형), resultMap은 내가 만든 객체 -->
+	<select id="selectOne" parameterType="string" resultMap="users">
+		SELECT *
+		FROM USERS WHERE u_id = #{u_id}
+	</select>
+
+	<!-- test는 if의 조건을 넣는 곳 -->
+	<select id="selectList"
+		parameterType="com.one.san.util.Pagination" resultMap="users">
+		SELECT * FROM USERS WHERE 1=1
+		<if test="keyword != null">
+			<if test="searchType == 'u_id'"> and U_ID like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_name'"> and U_NAME like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_nick'"> and U_NICK like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_phno'"> and U_PHNO like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_addr'"> and U_ADDR like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_birth'"> and U_BIRTH like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_email'"> and U_EMAIL like CONCAT('%', #{keyword}, '%') </if>
+			<if test="searchType == 'u_status'"> and U_STATUS like CONCAT('%', #{keyword}, '%') </if>
+			LIMIT #{sizePerPage} OFFSET #{startList}
+		</if>
+	</select>
+	
+<!-- 	SELECT * FROM users WHERE u_id LIKE CONCAT('%', ?1, '%') LIMIT ?2 OFFSET ?3 -->
+<!-- 	#{keyword} 검색어, #{sizePerPage} 표시할 항목수, #{startList} 건너 뛸 행수 -->
+	
+	
+	<select id="userTotalCnt"
+		parameterType="com.one.san.util.Pagination" resultType="integer">
+		SELECT count(*) FROM USERS WHERE 1=1
+		<if test="keyword != null">
+			<if test="searchType == 'u_id'"> and U_ID like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_name'"> and U_NAME like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_nick'"> and U_NICK like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_phno'"> and U_PHNO like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_addr'"> and U_ADDR like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_birth'"> and U_BIRTH like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_email'"> and U_EMAIL like CONCAT('%', #{keyword}, '%')</if>
+			<if test="searchType == 'u_status'"> and U_STATUS like CONCAT('%', #{keyword}, '%')</if>
+		</if>
+	</select>
+
+	<insert id="insertUser">
+		INSERT INTO USERS (u_no, u_id, u_pw, u_nick, u_name,
+		u_phno, u_addr, u_birth, u_email, u_point, u_status, u_social)
+		VALUES (#{u_no},
+		#{u_id}, #{u_pw}, #{u_nick}, #{u_name}, #{u_phno}, #{u_addr},
+		#{u_birth}, #{u_email}, DEFAULT, DEFAULT, 
+		<if test="u_social != null">#{u_social}</if>
+    	<if test="u_social == null">DEFAULT</if>)
+	</insert>
+
+	<update id="updateUser">
+		UPDATE USERS
+		<set>
+			<if test="u_pw != null">U_PW = #{u_pw},</if>
+			<if test="u_nick != null">U_NICK = #{u_nick},</if>
+			<if test="u_phno != null">U_PHNO = #{u_phno},</if>
+			<if test="u_addr != null">U_ADDR = #{u_addr},</if>
+			<if test="u_email != null">U_EMAIL = #{u_email},</if>
+		</set>
+		WHERE U_NO = #{u_no}
+	</update>
+
+	<select id="cartSelectUser" parameterType="string"
+		resultMap="users">
+		SELECT * FROM USERS WHERE U_ID = #{u_id}
+	</select>
+
+
+	<delete id="deleteUser">
+		UPDATE USERS SET U_STATUS = 'N' WHERE U_NO = #{u_no}
+	</delete>
+
+	<select id="findUser" parameterType="string" resultType="string">
+		SELECT
+		U_ID FROM USERS WHERE U_NAME = #{u_name} AND U_EMAIL = #{u_email}
+	</select>
+</mapper>
